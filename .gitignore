@@ -1,0 +1,12 @@
+BankEase-project.zip
+target/
+.env
+.env.*
+!.env.example
+application-local.properties
+**/application-local.properties
+.idea/
+.vscode/
+*.log
+
+/src/main/resources/application-local.properties

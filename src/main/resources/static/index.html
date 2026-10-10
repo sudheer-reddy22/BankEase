@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase | Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            background: #f2f6fc;
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #082c63, #1769aa);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .left-panel h1 {
+            font-size: 42px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .left-panel p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #dceaff;
+            max-width: 440px;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 38px;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(20, 50, 90, 0.10);
+        }
+
+        .login-card h2 {
+            color: #102b50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7b8798;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #243b5a;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d5deeb;
+            border-radius: 9px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #1769aa;
+            box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #1769aa;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0c4e87;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        #message {
+            margin-top: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .register-text {
+            text-align: center;
+            color: #68778c;
+            margin-top: 24px;
+            font-size: 14px;
+        }
+
+        .register-text a {
+            color: #1769aa;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                padding: 35px 25px;
+            }
+
+            .left-panel h1 {
+                font-size: 30px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .right-panel {
+                padding: 28px 18px;
+            }
+
+            .login-card {
+                padding: 28px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="left-panel">
+        <div class="brand">BankEase</div>
+        <h1>Banking made simple and secure.</h1>
+        <p>
+            Manage your bank account, deposit money, withdraw funds,
+            and track your transactions from one convenient place.
+        </p>
+    </section>
+
+    <main class="right-panel">
+        <div class="login-card">
+            <h2>Welcome back!</h2>
+            <p class="subtitle">Sign in to access your banking dashboard.</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" id="loginButton">Sign In</button>
+                <p id="message" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="register-text">
+                Don't have an account?
+                <a href="register.html">Create one</a>
+            </p>
+        </div>
+    </main>
+
+    
+<script>
+    const loginForm = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
+
+    loginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        message.textContent = "";
+        loginButton.disabled = true;
+        loginButton.textContent = "Signing in...";
+
+        try {
+            const response = await fetch("/api/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: document.getElementById("email").value.trim(),
+                    password: document.getElementById("password").value
+                })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || data.detail ||
+                    "Login failed. Check your email and password."
+                );
+            }
+
+            if (!data.token) {
+                throw new Error(
+                    "Login succeeded, but no security token was received."
+                );
+            }
+
+            // Save login details for this browser session
+            sessionStorage.setItem("bankUser", JSON.stringify(data));
+            sessionStorage.setItem("bankToken", data.token);
+
+            message.style.color = "#16803d";
+
+            if (data.role === "ADMIN") {
+                message.textContent =
+                    "Admin login successful! Opening admin dashboard...";
+                window.location.href = "/admin.html";
+            } else {
+                message.textContent =
+                    "Login successful! Opening your dashboard...";
+                window.location.href = "/dashboard.html";
+            }
+
+        } catch (error) {
+            message.style.color = "#c62828";
+            message.textContent =
+                error.message || "Unable to connect to the server.";
+        } finally {
+            loginButton.disabled = false;
+            loginButton.textContent = "Sign In";
+        }
+    });
+</script>
+</body>
+</html>
